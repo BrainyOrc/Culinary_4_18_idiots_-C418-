@@ -14,7 +14,7 @@
 #include <frc/kinematics/DifferentialDriveKinematics.h>
 #include <frc/Drive/DifferentialDrive.h>
 #include <frc2/command/RunCommand.h>
-#include <ctre/Phoenix.h>
+#include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 
 class DriveSub : public frc2::SubsystemBase 
 {

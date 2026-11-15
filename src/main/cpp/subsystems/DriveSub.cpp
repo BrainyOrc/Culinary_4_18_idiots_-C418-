@@ -30,11 +30,6 @@ void DriveSub::Init()
 
 void DriveSub::DriveTank(double left, double right) 
 {
-//  m_leftMotor1.Set(left);
-//  m_leftMotor2.Set(left);
-//  m_rightMotor1.Set(right);
-//  m_rightMotor2.Set(right);
-
 m_leftMotor1.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, left);
 m_leftMotor2.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, left);
 m_rightMotor1.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, right);
