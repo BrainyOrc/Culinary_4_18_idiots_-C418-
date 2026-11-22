@@ -1,5 +1,5 @@
 #include "commands/DriveCmd.h"
-
+#include <algorithm>
 #include <cmath>
 
 DriveCmd::DriveCmd(DriveSub * pDriveSub, frc2::CommandXboxController * pController)
@@ -20,7 +20,7 @@ void DriveCmd::Execute()
     {
         double deadzone = 0.05;
         double leftY = m_pController->GetLeftY();
-        double rightX = m_pController->GetRightY();
+        double rightX = m_pController->GetRightX();
 
         if (leftY < deadzone && leftY > -deadzone)
         {
@@ -39,7 +39,8 @@ void DriveCmd::Execute()
         }
 
         double responseFactor = 1.25;
-        double leftFactor = std::lerp(0.0, 1.0, (double)m_timer.Get() * responseFactor);
+        double ramp = std::clamp((double)m_timer.Get() * responseFactor, 0.0, 1.0);
+        double leftFactor = std::lerp(0.0, 1.0, ramp);
         double rightFactor = 1.0;
         
         m_pDriveSub->DriveRC(-(leftY * leftFactor), rightX * rightFactor);

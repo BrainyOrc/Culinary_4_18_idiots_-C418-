@@ -20,20 +20,25 @@ void DriveSub::Periodic()
 void DriveSub::Init() 
 {
   m_leftMotor1.SetInverted(false);
-  m_leftMotor2.SetInverted(false);
   m_rightMotor1.SetInverted(true);
-  m_rightMotor2.SetInverted(true);
 
   m_leftMotor2.Follow(m_leftMotor1);
   m_rightMotor2.Follow(m_rightMotor1);
+
+  m_leftMotor2.SetInverted(ctre::phoenix::motorcontrol::InvertType::FollowMaster);
+
+  m_rightMotor2.SetInverted(ctre::phoenix::motorcontrol::InvertType::FollowMaster);
 }
 
 void DriveSub::DriveTank(double left, double right) 
 {
-m_leftMotor1.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, left);
-m_leftMotor2.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, left);
-m_rightMotor1.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, right);
-m_rightMotor2.Set(ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, right);
+    // Only command the master Talons.
+    // The other two controllers follow automatically.
+    m_leftMotor1.Set(
+        ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, left);
+
+    m_rightMotor1.Set(
+        ctre::phoenix::motorcontrol::TalonSRXControlMode::PercentOutput, right);
 }
 
 void DriveSub::DriveRC(double vertical, double horizontal) 
