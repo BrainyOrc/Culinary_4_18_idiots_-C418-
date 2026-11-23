@@ -18,6 +18,7 @@ namespace OperatorConstants
 {
 
 inline constexpr int kDriverControllerPort = 0;
+inline constexpr int kDriverControllerPortTank = 1;
 
 //Drive:
 inline constexpr int kC418DriveLM1 = 2;

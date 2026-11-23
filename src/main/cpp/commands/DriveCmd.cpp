@@ -1,11 +1,13 @@
 #include "commands/DriveCmd.h"
-#include <algorithm>
-#include <cmath>
 
-DriveCmd::DriveCmd(DriveSub * pDriveSub, frc2::CommandXboxController * pController)
+DriveCmd::DriveCmd(
+    DriveSub* subsystem,
+    frc2::CommandXboxController* arcadeController,
+    frc2::CommandXboxController* tankController)
 {
-    m_pDriveSub = pDriveSub;
-    m_pController = pController;
+    m_pDriveSub = subsystem;
+    m_pArcadeController = arcadeController;
+    m_pTankController = tankController;
 
     AddRequirements(m_pDriveSub);
 }
@@ -16,41 +18,44 @@ void DriveCmd::Initialize()
 
 void DriveCmd::Execute()
 {
-    if (m_pDriveSub != nullptr && m_pController != nullptr)
+    if (m_pDriveSub == nullptr)
+        return;
+
+    // Check which controllers are connected.
+    bool arcadeConnected = frc::DriverStation::IsJoystickConnected(0);
+    bool tankConnected = frc::DriverStation::IsJoystickConnected(1);
+
+    // Tank takes priority if both controllers are connected.
+    if (tankConnected && m_pTankController != nullptr)
     {
-        double deadzone = 0.05;
-        double leftY = m_pController->GetLeftY();
-        double rightX = m_pController->GetRightX();
+        double left = -m_pTankController->GetLeftY();
+        double right = -m_pTankController->GetRightY();
 
-        if (leftY < deadzone && leftY > -deadzone)
-        {
-            leftY = 0.0;
-            m_timer.Stop();
-            m_timer.Reset();
-        }
-        else
-        {
-            m_timer.Start();
-        }
+        m_pDriveSub->DriveTank(left, right);
+    }
 
-        if (rightX < deadzone && rightX > -deadzone)
-        {
-            rightX = 0.0;
-        }
+    // Otherwise, use Arcade.
+    else if (arcadeConnected && m_pArcadeController != nullptr)
+    {
+        double forward = -m_pArcadeController->GetLeftY();
+        double turn = m_pArcadeController->GetRightX();
 
-        double responseFactor = 1.25;
-        double ramp = std::clamp((double)m_timer.Get() * responseFactor, 0.0, 1.0);
-        double leftFactor = std::lerp(0.0, 1.0, ramp);
-        double rightFactor = 1.0;
-        
-        m_pDriveSub->DriveRC(-(leftY * leftFactor), rightX * rightFactor);
+        m_pDriveSub->DriveRC(forward, turn);
+    }
 
+    // No controller connected.
+    else
+    {
+        m_pDriveSub->DriveTank(0.0, 0.0);
     }
 }
 
-void DriveCmd::End(bool interrupted) {}
+void DriveCmd::End(bool interrupted)
+{
+    m_pDriveSub->DriveTank(0.0, 0.0);
+}
 
 bool DriveCmd::IsFinished()
 {
-    return m_isFinished;
+    return false;
 }

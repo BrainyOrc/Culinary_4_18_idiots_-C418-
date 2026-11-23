@@ -40,6 +40,7 @@ void DriveSub::ConfigureMasters()
 
     m_rightMotor1.SetNeutralMode(
         ctre::phoenix::motorcontrol::NeutralMode::Brake);
+        // Set the neutral mode to brake for both master motors, which means they will resist motion when no power is applied.
 }
 
 void DriveSub::ConfigureFollowers()
@@ -75,6 +76,7 @@ void DriveSub::VerifyCAN()
     << ", RM1=" << rightMasterFirmware
     << ", RM2=" << rightFollowerFirmware
     << std::endl;
+    //helps ID the CAN for the motors and isolate the problem if one of the motors is not working.
 }
 
 void DriveSub::DriveTank(double left, double right)
@@ -97,6 +99,7 @@ void DriveSub::DriveRC(double vertical, double horizontal)
         vertical + dampedHoriz,
         vertical - dampedHoriz
     );
+    //should be a tank drive but with a dampened horizontal value to make it easier to turn the robot.
 }
 
 void DriveSub::Periodic()

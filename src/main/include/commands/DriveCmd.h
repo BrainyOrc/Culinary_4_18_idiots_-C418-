@@ -1,21 +1,19 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 #pragma once
 
-#include <frc/controller/PIDController.h>
+#include <frc/DriverStation.h>
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-#include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/button/CommandXboxController.h>
-#include "subsystems/DriveSub.h"
 
-#include "frc/Timer.h"
+#include "subsystems/DriveSub.h"
 
 class DriveCmd : public frc2::CommandHelper<frc2::Command, DriveCmd> {
  public:
-  DriveCmd(DriveSub* subsystem, frc2::CommandXboxController* pController);
+  DriveCmd(
+      DriveSub* subsystem,
+      frc2::CommandXboxController* arcadeController,
+      frc2::CommandXboxController* tankController
+  );
 
   void Initialize() override;
   void Execute() override;
@@ -24,8 +22,7 @@ class DriveCmd : public frc2::CommandHelper<frc2::Command, DriveCmd> {
 
  private:
   DriveSub* m_pDriveSub = nullptr;
-  frc2::CommandXboxController* m_pController;
-  bool m_isFinished = false;
 
-  frc::Timer m_timer;
+  frc2::CommandXboxController* m_pArcadeController = nullptr;
+  frc2::CommandXboxController* m_pTankController = nullptr;
 };
